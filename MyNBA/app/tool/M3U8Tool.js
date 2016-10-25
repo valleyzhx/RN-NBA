@@ -1,30 +1,35 @@
+'use strict';
+
 import React, { Component } from 'react';
 import { WebView , Alert } from 'react-native';
-var WEBVIEW_REF = 'webview';
+const WEBVIEW_REF = 'webview';
 
 class M3U8Tool extends Component {
+  constructor(props) {
+   super(props);
+   this.state = {
+     url: 'http://xianng.com/videoplay/video.html?videoid='+props.videoId
+   };
+ }
+
   render() {
     return (
       <WebView
         ref={WEBVIEW_REF}
-        source={{uri: 'http://v.youku.com/v_show/id_XNzE5NDQ5NDc2.html'}}
+        source={{uri:this.state.url}}
         style={{marginTop: 20}}
         javaScriptEnabled={true}
-        onLoadEnd = {this.onLoadEnd}
+        onLoadEnd = {this._onLoad}
       />
     );
   }
-  onLoadEnd(){
-    console.log('webview end');
-   var m3u8 =  this.refs[WEBVIEW_REF].injectedJavaScript = "BuildVideoInfo.m3u8src('mp4');"
-   if (m3u8) {
-     Alert.alert(
-              'Alert Title',
-              m3u8,
-            )
-   }
 
- }s
+
+
+
+  _onLoad(){
+
+ }
 
 
 }

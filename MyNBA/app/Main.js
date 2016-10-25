@@ -1,6 +1,6 @@
 
 
-import React, { Component } from 'react';
+import React, { Component , PropTypes} from 'react';
 import {
   AppRegistry,
   StyleSheet,
@@ -11,8 +11,10 @@ import {
   Image,
 } from 'react-native';
 
+var M3U8Tool = require('./tool/M3U8Tool');
+var dataArr = new Array();
+let page = 1;
 class Main extends Component {
-
   constructor(props) {
    super(props);
    var dataSource = new ListView.DataSource({rowHasChanged: (r1, r2) => r1 !== r2});
@@ -23,7 +25,7 @@ class Main extends Component {
    };
  }
  componentDidMount(){
-    this._loadDataFuction();
+   this._loadDataFuction();
  }
 
 
@@ -31,7 +33,7 @@ class Main extends Component {
  var count = rowData.view_count;
  var bigThumbnail = rowData.bigThumbnail;
  return (
-   <TouchableHighlight /*onPress={() => this.rowPressed(rowData.id)}*/
+   <TouchableHighlight onPress={() => this._rowPressed(rowData)}
        underlayColor='#dddddd'>
      <View>
        <View style={styles.rowContainer}>
@@ -53,13 +55,20 @@ class Main extends Component {
      <ListView
        dataSource={this.state.dataSource}
        enableEmptySections={ true}
+       onEndReached = {this._onEndReached.bind(this)}
        renderRow={this.renderRow.bind(this)}/>
    );
  }
+ _onEndReached(){
+   console.log('scroll end');
+   if (!this.state.isLoading) {
+     page += 1;
+     this._loadDataFuction();
+   }
+ }
 
 _loadDataFuction(){
-  console.log('start loading');
-  var query = 'https://openapi.youku.com/v2/searches/video/by_keyword.json?client_id=e2306ead120d2e34&keyword=nba&category=%E4%BD%93%E8%82%B2&page=10';
+  var query = 'https://openapi.youku.com/v2/searches/video/by_keyword.json?client_id=e2306ead120d2e34&keyword=nba&category=%E4%BD%93%E8%82%B2&orderby=published&page='+page;
   return fetch(query)
   .then(response => response.json())
   .then(json => this._handleResponse(json))
@@ -75,12 +84,20 @@ _loadDataFuction(){
   console.log('stop loading');
 
   if (json.videos.length > 0 ) {
-    console.log('Properties found: ' + json.videos.length);
-    var dataSource = new ListView.DataSource({rowHasChanged: (r1, r2) => r1 !== r2});
-    this.setState({dataSource: dataSource.cloneWithRows(json.videos)});
+    Array.prototype.push.apply(dataArr, json.videos);
+    var dataSource = this.state.dataSource;
+    this.setState({dataSource: dataSource.cloneWithRows(dataArr)});
   } else {
     this.setState({ message: 'Location not recognized; please try again.'});
   }
+ }
+
+ _rowPressed(rowData){
+   this.props.navigator.push({
+      title: rowData.title,
+      component:M3U8Tool,
+      passProps:{videoId:rowData.id}
+    });
  }
 
 }

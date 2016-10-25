@@ -1,0 +1,93 @@
+
+<!DOCTYPE html>
+<html>
+
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    </head>
+
+
+    <body>
+
+        <div id="youkuplayer" style="width:320px;height:280px;margin:auto"></div>
+
+        <script type="text/javascript" src="http://player.youku.com/jsapi">
+            function getQueryString(key)
+            {
+
+                var value = "";
+
+                ///获取当前页面的URL
+
+                var sURL = window.document.URL;
+
+                ///URL中是否包含查询字符串
+
+                if (sURL.indexOf("?") > 0)
+
+                {
+
+                    //分解URL,第二的元素为完整的查询字符串
+
+                    //即arrayParams[1]的值为【id=1&action=2】
+
+                    var arrayParams = sURL.split("?");
+
+
+
+                    //分解查询字符串
+
+                    //arrayURLParams[0]的值为【id=1 】
+
+                    //arrayURLParams[2]的值为【action=add】
+
+                    var arrayURLParams = arrayParams[1].split("&");
+
+
+
+                    //遍历分解后的键值对
+
+                    for (var i = 0; i < arrayURLParams.length; i++)
+
+                    {
+
+                        //分解一个键值对
+
+                        var sParam = arrayURLParams[i].split("=");
+
+
+
+                        if ((sParam[0] == key) && (sParam[1] != ""))
+
+                        {
+
+                            //找到匹配的的键,且值不为空
+
+                            value = sParam[1];
+
+                            break;
+
+                        }
+
+                    }
+
+                }
+
+
+
+                return value;
+
+            }
+
+        var value = getQueryString('videoid');
+
+        player = new YKU.Player('youkuplayer',{
+                                styleid: '0',
+                                client_id: 'c9bb14f8593c7a8b',//'e2306ead120d2e34',
+                                vid: value
+                                });
+            </script>
+
+    </body>
+</html>

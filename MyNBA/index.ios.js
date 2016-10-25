@@ -13,15 +13,6 @@
  } from 'react-native';
 
  var Main = require('./app/Main');
- var M3U8Tool = require('./app/tool/M3U8Tool');
-
- class HelloWorldApp extends Component {
-   render() {
-     return (
-       <Text>Hello world!</Text>
-     );
-   }
- }
 
 
 
@@ -33,7 +24,7 @@
          barTintColor='#FF5745'
          initialRoute={{
            title: '首页',
-           component:M3U8Tool
+           component:Main
          }}/>
 
      );
