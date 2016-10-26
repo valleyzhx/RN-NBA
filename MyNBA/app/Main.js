@@ -68,7 +68,7 @@ class Main extends Component {
  }
 
 _loadDataFuction(){
-  var query = 'https://openapi.youku.com/v2/searches/video/by_keyword.json?client_id=e2306ead120d2e34&keyword=nba&category=%E4%BD%93%E8%82%B2&orderby=published&page='+page;
+  var query = 'https://openapi.youku.com/v2/searches/video/by_keyword.json?client_id=e2306ead120d2e34&keyword=nba&category=%E4%BD%93%E8%82%B2&page='+page;
   return fetch(query)
   .then(response => response.json())
   .then(json => this._handleResponse(json))
