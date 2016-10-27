@@ -84,7 +84,7 @@ class M3U8Tool extends Component {
           playWhenInactive={false}     // [iOS] Video continues to play when control or notification center are shown.
           onLoadStart={this.loadStart.bind(this)} // Callback when video starts to load
           onLoad={this.onLoad.bind(this)}     // Callback when video loads
-          onProgress={this.setTime.bind(this)}    // Callback every ~250ms with currentTime
+          onProgress={this.onProgress.bind(this)}    // Callback every ~250ms with currentTime
           onEnd={this.onEnd.bind(this)}           // Callback when playback finishes
           onError={this.videoError.bind(this)}    // Callback when video cannot be loaded
           style={[styles.backgroundVideo,this.state.customStyle]} />
@@ -108,7 +108,7 @@ class M3U8Tool extends Component {
     this.setState({loadingColor:'rgba(255,255,255,0)',playing:true});
     this.setState({playButtonColor:'rgba(255,255,255,0)'});
   }
-  setTime(event){
+  onProgress(event){
     this.setState({progress:event.position});
     this.setState({duration:event.duration,video:{time:this.formatTime(event.currentTime),duration:this.formatTime(event.duration)}});
     this.setState({loadingColor:'rgba(255,255,255,0)'});

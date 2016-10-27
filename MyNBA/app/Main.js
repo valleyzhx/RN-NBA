@@ -12,6 +12,8 @@ import {
 } from 'react-native';
 
 var M3U8Tool = require('./tool/M3U8Tool');
+var VideoPlay = require('./VideoPlay');
+
 var dataArr = new Array();
 let page = 1;
 class Main extends Component {
@@ -95,7 +97,7 @@ _loadDataFuction(){
  _rowPressed(rowData){
    this.props.navigator.push({
       title: rowData.title,
-      component:M3U8Tool,
+      component:VideoPlay,
       passProps:{videoId:rowData.id}
     });
  }
