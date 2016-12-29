@@ -11,7 +11,8 @@ import {
   Image,
 } from 'react-native';
 
-var M3U8Tool = require('./tool/M3U8Tool');
+
+// var M3U8Tool = require('./tool/M3U8Tool');
 var VideoPlay = require('./VideoPlay');
 
 var dataArr = new Array();
@@ -22,6 +23,7 @@ class Main extends Component {
    var dataSource = new ListView.DataSource({rowHasChanged: (r1, r2) => r1 !== r2});
    this.state = {
      isLoading: false,
+     moreData: true,
      message : '',
      dataSource: dataSource.cloneWithRows([]),
    };
@@ -32,8 +34,8 @@ class Main extends Component {
 
 
  renderRow(rowData, sectionID, rowID) {
- var count = rowData.view_count;
- var bigThumbnail = rowData.bigThumbnail;
+ // var count = rowData.view_count;
+ var bigThumbnail = rowData.img;
  return (
    <TouchableHighlight onPress={() => this._rowPressed(rowData)}
        underlayColor='#dddddd'>
@@ -42,7 +44,7 @@ class Main extends Component {
          <Image style={styles.thumb} source={{ uri: bigThumbnail }} />
          <View  style={styles.textContainer}>
            <Text style={styles.title} numberOfLines={2}>{rowData.title}</Text>
-           <Text style={styles.count} >播放:{count}</Text>
+            <Text style={styles.count} >播放:{10}</Text>
          </View>
        </View>
        <View style={styles.separator}/>
@@ -54,23 +56,30 @@ class Main extends Component {
 
  render() {
    return (
-     <ListView
-       dataSource={this.state.dataSource}
-       enableEmptySections={ true}
-       onEndReached = {this._onEndReached.bind(this)}
-       renderRow={this.renderRow.bind(this)}/>
+     <View style={{flex: 1}}>
+       <View style={{flexDirection: 'row',height: 64,backgroundColor: '#FF5745',justifyContent: 'center',alignItems: 'center'}}>
+          <Text style={{marginTop:10 ,textAlign:'center', color:'white',fontSize: 17}}>首页</Text>
+       </View>
+       <ListView
+         dataSource={this.state.dataSource}
+         enableEmptySections={ true}
+         onEndReached = {this._onEndReached.bind(this)}
+         renderRow={this.renderRow.bind(this)}/>
+    </View>
    );
+
  }
  _onEndReached(){
    console.log('scroll end');
-   if (!this.state.isLoading) {
+   if (!this.state.isLoading && this.state.moreData) {
      page += 1;
      this._loadDataFuction();
    }
  }
 
 _loadDataFuction(){
-  var query = 'https://openapi.youku.com/v2/searches/video/by_keyword.json?client_id=e2306ead120d2e34&keyword=nba&category=%E4%BD%93%E8%82%B2&page='+page;
+  this.setState({ isLoading: true , message: '' });
+  var query = 'https://nba.xianng.com/api?func=getVideoList&page='+page;
   return fetch(query)
   .then(response => response.json())
   .then(json => this._handleResponse(json))
@@ -78,19 +87,20 @@ _loadDataFuction(){
      this.setState({
       isLoading: false,
       message: 'Something bad happened ' + error
-   }));
+   })
+  );
  };
 
  _handleResponse(json) {
   this.setState({ isLoading: false , message: '' });
   console.log('stop loading');
 
-  if (json.videos.length > 0 ) {
-    Array.prototype.push.apply(dataArr, json.videos);
+  if (json.data.length > 0 ) {
+    Array.prototype.push.apply(dataArr, json.data);
     var dataSource = this.state.dataSource;
     this.setState({dataSource: dataSource.cloneWithRows(dataArr)});
   } else {
-    this.setState({ message: 'Location not recognized; please try again.'});
+    this.setState({ message: 'No more Data',moreData:false});
   }
  }
 
@@ -98,7 +108,9 @@ _loadDataFuction(){
    this.props.navigator.push({
       title: rowData.title,
       component:VideoPlay,
-      passProps:{videoId:rowData.id}
+      params:{
+        videoItem:rowData
+      }
     });
  }
 
