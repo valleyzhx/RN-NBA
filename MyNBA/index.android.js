@@ -1,40 +1,7 @@
-/**
- * Sample React Native App
- * https://github.com/facebook/react-native
- * @flow
- */
- import React, { Component } from 'react';
- import {
-   AppRegistry,
-   StyleSheet,
-   Text,
-   View,
-   Navigator,
- } from 'react-native';
+'use strict'
 
- var Main = require('./app/Main');
+import {AppRegistry} from 'react-native'
+import MyNBA from './app/MyNBA'
 
-
-
- class MyNBA extends Component {
-   render() {
-     return (
-       <Navigator
-         style={styles.container}
-         barTintColor='#FF5745'
-         initialRoute={{
-           title: '首页',
-           component:Main
-         }}/>
-
-     );
-   }
- }
-
- const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-  }
-});
 
 AppRegistry.registerComponent('MyNBA', () => MyNBA);

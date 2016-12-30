@@ -9,6 +9,7 @@ import {
   ListView,
   TouchableHighlight,
   Image,
+  RefreshControl,
 } from 'react-native';
 
 
@@ -44,7 +45,7 @@ class Main extends Component {
          <Image style={styles.thumb} source={{ uri: bigThumbnail }} />
          <View  style={styles.textContainer}>
            <Text style={styles.title} numberOfLines={2}>{rowData.title}</Text>
-            <Text style={styles.count} >播放:{10}</Text>
+            <Text style={styles.count} >共{rowData.videoList.length}个视频</Text>
          </View>
        </View>
        <View style={styles.separator}/>
@@ -63,6 +64,16 @@ class Main extends Component {
        <ListView
          dataSource={this.state.dataSource}
          enableEmptySections={ true}
+         refreshControl={
+          <RefreshControl
+            refreshing={this.state.isLoading}
+            onRefresh={this._onRefresh.bind(this)}
+            tintColor="#FF5745"
+            title="下拉刷新..."
+            titleColor="#FF5745"
+            colors={['#ff0000', '#00ff00', '#0000ff']}
+            progressBackgroundColor="#ffff00"
+          />}
          onEndReached = {this._onEndReached.bind(this)}
          renderRow={this.renderRow.bind(this)}/>
     </View>
@@ -76,6 +87,12 @@ class Main extends Component {
      this._loadDataFuction();
    }
  }
+ _onRefresh() {
+     if (!this.state.isLoading) {
+       page = 1;
+       this._loadDataFuction();
+     }
+   }
 
 _loadDataFuction(){
   this.setState({ isLoading: true , message: '' });
@@ -94,7 +111,9 @@ _loadDataFuction(){
  _handleResponse(json) {
   this.setState({ isLoading: false , message: '' });
   console.log('stop loading');
-
+  if (page == 1) {
+    dataArr = [];
+  }
   if (json.data.length > 0 ) {
     Array.prototype.push.apply(dataArr, json.data);
     var dataSource = this.state.dataSource;
@@ -108,8 +127,8 @@ _loadDataFuction(){
    this.props.navigator.push({
       title: rowData.title,
       component:VideoPlay,
-      params:{
-        videoItem:rowData
+      passProps:{
+        videoList:rowData.videoList
       }
     });
  }
@@ -140,7 +159,7 @@ const styles = StyleSheet.create({
    marginRight: 10
  },
  textContainer: {
-   flex: 1
+   flex: 1,
  },
  separator: {
    height: 1,
@@ -150,11 +169,11 @@ const styles = StyleSheet.create({
    fontSize: 16,
    fontWeight: 'bold',
    color: '#48BBEC',
+   marginTop:15
  },
  title: {
    fontSize: 16,
    color: '#656565',
-
  },
  rowContainer: {
    flexDirection: 'row',

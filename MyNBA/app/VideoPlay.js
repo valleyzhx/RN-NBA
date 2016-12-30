@@ -2,44 +2,16 @@
 
 import React, { Component } from 'react';
 import { WebView , Alert , View , Text , ScrollView ,StyleSheet , TouchableHighlight } from 'react-native';
-// import {Icon} from 'react-native-icons'
+import Icon from 'react-native-vector-icons/Ionicons';
+
 
 const WEBVIEW_REF = 'webview';
-var arr = [
-    {
-        "title": "[今日十佳球-原声] 布罗格登颜扣欧文+反扣詹姆斯\r",
-        "video": "http://www.24zbw.com/bf/qq.html?id=i0022r5ijqt&tiny=0&auto=1"
-    },
-    {
-        "title": "[今日最佳镜头] 布罗格登突破霸气反扣詹姆斯\r",
-        "video": "http://www.24zbw.com/bf/qq.html?id=g0022qwnfyj&tiny=0&auto=1"
-    },
-    {
-        "title": "[今日最佳扣篮] 布罗格登单手暴力劈扣欧文\r",
-        "video": "http://www.24zbw.com/bf/qq.html?id=m0022wk5e3r&tiny=0&auto=1"
-    },
-    {
-        "title": "[今日最佳助攻] 保罗快手妙传 皇叔接球暴扣\r",
-        "video": "http://www.24zbw.com/bf/qq.html?id=p0022pcy95v&tiny=0&auto=1"
-    },
-    {
-        "title": "[今日最佳动作] 利拉德持球突破轻松写意拉杆\r",
-        "video": "http://www.24zbw.com/bf/qq.html?id=z0022tzgjac&tiny=0&auto=1"
-    },
-    {
-        "title": "[今日最佳运球] 哈登晃开铁林防守三分飚射\r",
-        "video": "http://www.24zbw.com/bf/qq.html?id=y0022ab57pm&tiny=0&auto=1"
-    },
-    {
-        "title": "[今日最佳盖帽] 又见詹式追身血帽帕克接锅",
-        "video": "http://www.24zbw.com/bf/qq.html?id=e00226n0sg6&tiny=0&auto=1"
-    }
-];
 
 class VideoPlay extends Component {
   constructor(props) {
    super(props);
    this.state = {
+     videoList:[],
      url: '',
      selectedIndex:-1,
    };
@@ -47,31 +19,37 @@ class VideoPlay extends Component {
  componentDidMount() {
          //这里获取从FirstPageComponent传递过来的参数: id
          this.setState({
-             videoItem:this.props.videoItem,
-             url: this.props.videoItem.videoList[0].video,
+             videoList:this.props.videoList,
+             url: this.props.videoList[0].video,
              selectedIndex:0
          });
         //  this.refs[WEBVIEW_REF].reload();
      }
   render() {
-    var list = arr.map(this.createThumbRow.bind(this));
+    var list = this.state.videoList.map(this.createThumbRow.bind(this));
     return (
-      <View style={{flex: 1, flexDirection:'column', backgroundColor:'white'}}>
-      <View style={{height:64}}>
-        <TouchableHighlight
-          onPress={this.onPressBack.bind(this)}
-          underlayColor='transparent'>
-
-        </TouchableHighlight>
-      </View>
-
-        <View style={{flexDirection: 'row',height: 64,backgroundColor: '#FF5745',justifyContent: 'center',alignItems: 'center'}}>
-           <Text style={{marginTop:10 ,textAlign:'center', color:'white',fontSize: 17}}>视频播放</Text>
+      <View style={styles.container}>
+        <View style={styles.navigation}>
+           <TouchableHighlight
+             onPress={this._onPressBack.bind(this)}
+             underlayColor='transparent'>
+             <View style={{width:80,height:44}}>
+             <Icon
+               name='ios-arrow-back'
+               size={44}
+               color='#fff'
+               style={styles.backIcon} />
+             </View>
+           </TouchableHighlight>
+           <View style={styles.header}>
+            <Text style={{textAlign:'center',flex:1,color:'white',fontSize: 17}}>视频播放</Text>
+           </View>
         </View>
+
         <WebView
           ref={WEBVIEW_REF}
           source={{uri:this.state.url}}
-          style={{marginTop:20}}
+          style={styles.webview}
           javaScriptEnabled={true}
           mediaPlaybackRequiresUserAction={true}
           onLoadEnd = {this._onLoad}
@@ -101,6 +79,9 @@ class VideoPlay extends Component {
     );
   }
 
+_onPressBack(){
+   this.props.navigator.pop()
+}
 
   _onLoad(){
 
@@ -121,11 +102,29 @@ class VideoPlay extends Component {
 
 
 var styles = StyleSheet.create({
+  container: {
+    flex:1,
+    backgroundColor:'#f0f0f0'
+  },
+  navigation: {
+    flexDirection: 'row',
+    paddingTop:20,
+    backgroundColor: '#FF5745',
+  },
   backIcon: {
-    height: 30,
-    marginLeft: 6,
-    marginTop: 6,
-    width: 30
+    left:10,
+    height: 44,
+    width: 44
+  },
+  header: {
+    position: 'absolute',
+    left: 0,
+    right: 0,
+    bottom: 15,
+    alignItems: 'center',
+  },
+  webview:{
+    margin:10
   },
   buttonNormal: {
     margin: 7,
